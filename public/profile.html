@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mon Profil - Youth Green Tech</title>
+  <meta name="description" content="Gestion du profil - Youth Green Tech" />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' fill='%2327ae60'>✓</text></svg>" />
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.min.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container">
+      <div class="header-inner">
+        <a href="index.html" class="brand">
+          <span class="logo-icon">✓</span> Youth Green Tech
+        </a>
+        <nav class="site-nav" id="site-nav">
+          <ul>
+            <li><a href="dashboard.html">Tableau de Bord</a></li>
+            <li><a href="profile.html">Mon Profil</a></li>
+            <li><button id="logoutBtn" class="btn outline small">Déconnexion</button></li>
+          </ul>
+        </nav>
+        <button class="nav-toggle" aria-expanded="false" aria-label="Menu de navigation">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="profile-page">
+    <section class="profile-section">
+      <div class="container">
+        <h1>Gestion du Profil</h1>
+        <p class="subtitle">Mettez à jour vos informations personnelles et paramètres de sécurité</p>
+
+        <!-- Messages -->
+        <div id="errorMessage" class="auth-message error-message" role="alert" aria-live="assertive" style="display: none;">
+          <span class="message-icon">⚠️</span>
+          <span id="errorText"></span>
+        </div>
+
+        <div id="successMessage" class="auth-message success-message" role="alert" aria-live="polite" style="display: none;">
+          <span class="message-icon">✅</span>
+          <span id="successText"></span>
+        </div>
+
+        <!-- Profile Form Tabs -->
+        <div class="profile-tabs">
+          <button class="tab-button active" data-tab="personal">
+            👤 Informations Personnelles
+          </button>
+          <button class="tab-button" data-tab="interests">
+            💡 Intérêts
+          </button>
+          <button class="tab-button" data-tab="security">
+            🔒 Sécurité
+          </button>
+        </div>
+
+        <!-- Tab: Personal Info -->
+        <div id="personal" class="tab-content active">
+          <div class="profile-card">
+            <h2>Informations Personnelles</h2>
+            
+            <form id="personalForm" class="auth-form">
+              <div class="form-group">
+                <label for="displayName">Nom complet</label>
+                <input
+                  id="displayName"
+                  type="text"
+                  required
+                  minlength="2"
+                  maxlength="100"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="email">Email (non modifiable)</label>
+                <input
+                  id="email"
+                  type="email"
+                  readonly
+                  disabled
+                />
+                <small class="form-hint">Pour changer d'email, contactez le support</small>
+              </div>
+
+              <div class="form-group">
+                <label for="phone">Numéro de téléphone</label>
+                <input
+                  id="phone"
+                  type="tel"
+                  placeholder="+33 6 12 34 56 78"
+                  maxlength="20"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="bio">Biographie</label>
+                <textarea
+                  id="bio"
+                  rows="5"
+                  placeholder="Parlez-nous un peu de vous..."
+                  maxlength="500"
+                ></textarea>
+                <small id="bioCount" class="form-hint">0/500</small>
+              </div>
+
+              <button type="submit" class="btn primary">
+                Enregistrer les modifications
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Tab: Interests -->
+        <div id="interests" class="tab-content">
+          <div class="profile-card">
+            <h2>Centres d'Intérêt</h2>
+            <p class="subtitle">Sélectionnez les domaines qui vous intéressent</p>
+
+            <form id="interestsForm" class="auth-form">
+              <div class="interests-grid">
+                <div class="interest-checkbox">
+                  <input type="checkbox" id="int-innovation" value="innovation" />
+                  <label for="int-innovation">
+                    <span class="icon">💡</span>
+                    <span class="label">Innovation</span>
+                  </label>
+                </div>
+
+                <div class="interest-checkbox">
+                  <input type="checkbox" id="int-formation" value="formation" />
+                  <label for="int-formation">
+                    <span class="icon">📚</span>
+                    <span class="label">Formation</span>
+                  </label>
+                </div>
+
+                <div class="interest-checkbox">
+                  <input type="checkbox" id="int-durabilite" value="durabilite" />
+                  <label for="int-durabilite">
+                    <span class="icon">🌱</span>
+                    <span class="label">Durabilité</span>
+                  </label>
+                </div>
+
+                <div class="interest-checkbox">
+                  <input type="checkbox" id="int-community" value="community" />
+                  <label for="int-community">
+                    <span class="icon">👥</span>
+                    <span class="label">Communauté</span>
+                  </label>
+                </div>
+
+                <div class="interest-checkbox">
+                  <input type="checkbox" id="int-events" value="events" />
+                  <label for="int-events">
+                    <span class="icon">🎯</span>
+                    <span class="label">Événements</span>
+                  </label>
+                </div>
+
+                <div class="interest-checkbox">
+                  <input type="checkbox" id="int-networking" value="networking" />
+                  <label for="int-networking">
+                    <span class="icon">🤝</span>
+                    <span class="label">Networking</span>
+                  </label>
+                </div>
+              </div>
+
+              <button type="submit" class="btn primary">
+                Enregistrer les intérêts
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Tab: Security -->
+        <div id="security" class="tab-content">
+          <div class="profile-card">
+            <h2>Sécurité</h2>
+            <p class="subtitle">Gérez vos paramètres de sécurité et mot de passe</p>
+
+            <!-- Change Password -->
+            <div class="security-section">
+              <h3>Changer le mot de passe</h3>
+              <form id="passwordForm" class="auth-form">
+                <div class="form-group">
+                  <label for="currentPassword">Mot de passe actuel</label>
+                  <input
+                    id="currentPassword"
+                    type="password"
+                    required
+                    autocomplete="current-password"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="newPassword">Nouveau mot de passe</label>
+                  <input
+                    id="newPassword"
+                    type="password"
+                    required
+                    minlength="8"
+                    autocomplete="new-password"
+                  />
+                  <small class="form-hint">
+                    Au moins 8 caractères : majuscule, minuscule, chiffre
+                  </small>
+                  <div class="password-strength">
+                    <div id="strengthBar" class="strength-bar"></div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="confirmNewPassword">Confirmer le nouveau mot de passe</label>
+                  <input
+                    id="confirmNewPassword"
+                    type="password"
+                    required
+                    autocomplete="new-password"
+                  />
+                </div>
+
+                <button type="submit" class="btn primary">
+                  Changer le mot de passe
+                </button>
+              </form>
+            </div>
+
+            <!-- Session Management -->
+            <div class="security-section">
+              <h3>Gestion des Sessions</h3>
+              <div class="security-info">
+                <p>Sessions actives: <strong id="activeSessions">1</strong></p>
+                <button class="btn outline" onclick="logoutAllSessions()">
+                  Déconnecter toutes les sessions
+                </button>
+              </div>
+            </div>
+
+            <!-- Data Management -->
+            <div class="security-section">
+              <h3>Données Personnelles</h3>
+              <div class="security-info">
+                <p>Vos données sont stockées localement et chiffrées.</p>
+                <button class="btn secondary" onclick="downloadUserData()">
+                  📥 Télécharger mes données
+                </button>
+                <button class="btn outline" onclick="deleteAccount()">
+                  🗑️ Supprimer le compte
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <p>&copy; <span id="year"></span> Youth Green Tech. Tous droits réservés.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+  <script src="js/members.js"></script>
+
+  <!-- Page script -->
+  <script>
+    // Require authentication
+    requireAuth();
+
+    const user = auth.getCurrentUser();
+    if (!user) {
+      window.location.href = 'login.html';
+    }
+
+    // Update year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Mobile nav
+    const navToggle = document.querySelector('.nav-toggle');
+    const siteNav = document.getElementById('site-nav');
+    navToggle.addEventListener('click', () => {
+      const expanded = navToggle.getAttribute('aria-expanded') === 'true';
+      navToggle.setAttribute('aria-expanded', String(!expanded));
+      siteNav.classList.toggle('open');
+    });
+
+    // Close mobile nav on link click
+    document.querySelectorAll('#site-nav a').forEach(link => {
+      link.addEventListener('click', () => {
+        navToggle.setAttribute('aria-expanded', 'false');
+        siteNav.classList.remove('open');
+      });
+    });
+
+    // Logout button
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      if (confirm('Êtes-vous sûr de vouloir vous déconnecter?')) {
+        auth.logout();
+        window.location.href = 'login.html';
+      }
+      }
+    });
+
+    // Tab switching
+    document.querySelectorAll('.tab-button').forEach(button => {
+      button.addEventListener('click', function() {
+        // Remove active class from all buttons and tabs
+        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+
+        // Add active class to clicked button and corresponding tab
+        this.classList.add('active');
+        const tabId = this.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
+      });
+    });
+
+    // Personal form
+    const personalForm = document.getElementById('personalForm');
+    document.getElementById('displayName').value = user.displayName;
+    document.getElementById('email').value = user.email;
+    document.getElementById('phone').value = user.phone || '';
+    document.getElementById('bio').value = user.bio || '';
+
+    personalForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const result = auth.updateUserProfile({
+        displayName: document.getElementById('displayName').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        bio: document.getElementById('bio').value.trim(),
+      });
+
+      if (result.success) {
+        showSuccess('Profil mis à jour avec succès');
+      } else {
+        showError(result.message);
+      }
+    });
+
+    // Bio counter
+    document.getElementById('bio').addEventListener('input', function() {
+      document.getElementById('bioCount').textContent = `${this.value.length}/500`;
+    });
+    document.getElementById('bioCount').textContent = `${user.bio.length}/500`;
+
+    // Interests form
+    const interestsForm = document.getElementById('interestsForm');
+    if (user.interests && user.interests.length > 0) {
+      user.interests.forEach(interest => {
+        const checkbox = document.getElementById(`int-${interest}`);
+        if (checkbox) checkbox.checked = true;
+      });
+    }
+
+    interestsForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const interests = [];
+      document.querySelectorAll('.interest-checkbox input:checked').forEach(checkbox => {
+        interests.push(checkbox.value);
+      });
+
+      const result = auth.updateUserProfile({ interests });
+      if (result.success) {
+        showSuccess('Intérêts mis à jour');
+      } else {
+        showError(result.message);
+      }
+    });
+
+    // Password form
+    const passwordForm = document.getElementById('passwordForm');
+    const strengthBar = document.getElementById('strengthBar');
+
+    document.getElementById('newPassword').addEventListener('input', function() {
+      const password = this.value;
+      let strength = 0;
+
+      if (password.length >= 8) strength += 25;
+      if (password.length >= 12) strength += 25;
+      if (/[A-Z]/.test(password) && /[a-z]/.test(password)) strength += 25;
+      if (/\d/.test(password)) strength += 25;
+
+      strengthBar.style.width = strength + '%';
+      strengthBar.style.backgroundColor = strength < 50 ? '#e74c3c' : strength < 75 ? '#f39c12' : '#27ae60';
+    });
+
+    passwordForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const currentPassword = document.getElementById('currentPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmNewPassword').value;
+
+      if (newPassword !== confirmPassword) {
+        showError('Les mots de passe ne correspondent pas');
+        return;
+      }
+
+      const result = await auth.changePassword(currentPassword, newPassword);
+      if (result.success) {
+        showSuccess('Mot de passe changé avec succès');
+        passwordForm.reset();
+        strengthBar.style.width = '0%';
+      } else {
+        showError(result.message);
+      }
+    });
+
+    // Data management functions
+    function downloadUserData() {
+      const data = {
+        user: user,
+        exportDate: new Date().toISOString(),
+      };
+      const json = JSON.stringify(data, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `youthgreentech-data-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showSuccess('Données téléchargées');
+    }
+
+    function logoutAllSessions() {
+      if (confirm('Cela vous déconnectera de tous les appareils. Continuer?')) {
+        auth.logout();
+        window.location.href = 'login.html?expired=true';
+      }
+    }
+
+    function deleteAccount() {
+      if (confirm('Êtes-vous absolument sûr? Votre compte sera supprimé définitivement.')) {
+        if (confirm('ATTENTION: Cette action est irréversible. Tapez votre email pour confirmer.')) {
+          const email = prompt('Confirmez en tapant votre email:');
+          if (email === user.email) {
+            const users = auth.getAllUsers();
+            const filtered = users.filter(u => u.id !== user.id);
+            localStorage.setItem(auth.USERS_KEY, JSON.stringify(filtered));
+            auth.logout();
+            alert('Votre compte a été supprimé');
+            window.location.href = 'index.html';
+          }
+        }
+      }
+    }
+
+    // Message functions
+    function showError(message) {
+      document.getElementById('errorText').textContent = message;
+      document.getElementById('errorMessage').style.display = 'block';
+    }
+
+    function showSuccess(message) {
+      document.getElementById('successText').textContent = message;
+      document.getElementById('successMessage').style.display = 'block';
+      setTimeout(() => {
+        document.getElementById('successMessage').style.display = 'none';
+      }, 5000);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tableau de Bord - Youth Green Tech</title>
+  <meta name="description" content="Tableau de bord membre - Youth Green Tech" />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' fill='%2327ae60'>✓</text></svg>" />
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.min.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container">
+      <div class="header-inner">
+        <a href="index.html" class="brand">
+          <span class="logo-icon">✓</span> Youth Green Tech
+        </a>
+        <nav class="site-nav" id="site-nav">
+          <ul>
+            <li><a href="dashboard.html">Tableau de Bord</a></li>
+            <li><a href="profile.html">Mon Profil</a></li>
+            <li><button id="logoutBtn" class="btn outline small">Déconnexion</button></li>
+          </ul>
+        </nav>
+        <button class="nav-toggle" aria-expanded="false" aria-label="Menu de navigation">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="dashboard-page">
+    <!-- Hero Welcome -->
+    <section class="dashboard-hero">
+      <div class="container">
+        <div class="hero-content">
+          <div class="user-avatar" id="userAvatar">
+            <span id="avatarInitials">YU</span>
+          </div>
+          <div class="hero-text">
+            <h1 id="welcomeTitle">Bienvenue!</h1>
+            <p id="lastLogin" class="subtitle"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard Stats -->
+    <section class="dashboard-stats">
+      <div class="container">
+        <div class="stats-grid">
+          <div class="stat-box">
+            <span class="stat-icon">📚</span>
+            <h3>Formations</h3>
+            <p class="stat-value" id="formationCount">0</p>
+            <a href="#" class="stat-link">Voir plus →</a>
+          </div>
+
+          <div class="stat-box">
+            <span class="stat-icon">🎯</span>
+            <h3>Objectifs</h3>
+            <p class="stat-value" id="objectiveCount">0</p>
+            <a href="#" class="stat-link">Gérer →</a>
+          </div>
+
+          <div class="stat-box">
+            <span class="stat-icon">🏆</span>
+            <h3>Badges</h3>
+            <p class="stat-value" id="badgeCount">0</p>
+            <a href="#" class="stat-link">Débloquer →</a>
+          </div>
+
+          <div class="stat-box">
+            <span class="stat-icon">👥</span>
+            <h3>Réseau</h3>
+            <p class="stat-value" id="networkCount">0</p>
+            <a href="#" class="stat-link">Consulter →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard Content -->
+    <section class="dashboard-content">
+      <div class="container">
+        <div class="dashboard-grid">
+          <!-- Left Column: Info -->
+          <div class="dashboard-column">
+            <div class="dashboard-card">
+              <h2>Informations Membre</h2>
+              <div class="info-item">
+                <label>Email:</label>
+                <p id="infoEmail"></p>
+              </div>
+              <div class="info-item">
+                <label>Nom complet:</label>
+                <p id="infoName"></p>
+              </div>
+              <div class="info-item">
+                <label>Membre depuis:</label>
+                <p id="infoJoined"></p>
+              </div>
+              <div class="info-item">
+                <label>Dernière connexion:</label>
+                <p id="infoLastLogin"></p>
+              </div>
+              <a href="profile.html" class="btn primary">Modifier le Profil</a>
+            </div>
+
+            <div class="dashboard-card">
+              <h2>Intérêts</h2>
+              <div id="interestsList" class="interests-list"></div>
+              <a href="profile.html" class="btn secondary">Mettre à jour</a>
+            </div>
+          </div>
+
+          <!-- Right Column: Activity -->
+          <div class="dashboard-column">
+            <div class="dashboard-card">
+              <h2>Activité Récente</h2>
+              <div class="activity-list" id="activityList">
+                <p class="empty-state">Aucune activité pour le moment</p>
+              </div>
+            </div>
+
+            <div class="dashboard-card">
+              <h2>Actions Rapides</h2>
+              <div class="quick-actions">
+                <a href="#" class="action-button">
+                  <span>📖</span> Accéder aux formations
+                </a>
+                <a href="#" class="action-button">
+                  <span>💬</span> Rejoindre la communauté
+                </a>
+                <a href="#" class="action-button">
+                  <span>📋</span> Consulter les événements
+                </a>
+                <a href="profile.html" class="action-button">
+                  <span>⚙️</span> Paramètres de sécurité
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Session Info -->
+    <section class="session-info">
+      <div class="container">
+        <div class="info-box">
+          <h3>🔐 Votre Session</h3>
+          <p>
+            Vous êtes connecté de manière sécurisée. Votre session expirera après <strong>30 minutes d'inactivité</strong>.
+          </p>
+          <div class="session-details">
+            <p>Token de session: <code id="sessionToken" class="truncate"></code></p>
+            <p>Connecté depuis: <span id="sessionTime"></span></p>
+            <p>Expire dans: <span id="sessionExpiry"></span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <p>&copy; <span id="year"></span> Youth Green Tech. Tous droits réservés.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+  <script src="js/members.js"></script>
+
+  <!-- Page script -->
+  <script>
+    // Require authentication
+    requireAuth();
+
+    const user = auth.getCurrentUser();
+    const session = auth.getCurrentSession();
+    
+    if (!user || !session) {
+      window.location.href = 'login.html';
+    }
+
+    // Update year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Mobile nav
+    const navToggle = document.querySelector('.nav-toggle');
+    const siteNav = document.getElementById('site-nav');
+    navToggle.addEventListener('click', () => {
+      const expanded = navToggle.getAttribute('aria-expanded') === 'true';
+      navToggle.setAttribute('aria-expanded', String(!expanded));
+      siteNav.classList.toggle('open');
+    });
+
+    // Close mobile nav on link click
+    document.querySelectorAll('#site-nav a').forEach(link => {
+      link.addEventListener('click', () => {
+        navToggle.setAttribute('aria-expanded', 'false');
+        siteNav.classList.remove('open');
+      });
+    });
+
+    // Logout button
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      if (confirm('Êtes-vous sûr de vouloir vous déconnecter?')) {
+        auth.logout();
+        window.location.href = 'login.html';
+      }
+    });
+
+    // Update welcome content
+    document.getElementById('welcomeTitle').textContent = `Bienvenue, ${escapeHtml(user.displayName)}!`;
+
+    // Update avatar
+    if (user.avatar && user.avatar.initials) {
+      document.getElementById('avatarInitials').textContent = user.avatar.initials;
+      document.getElementById('userAvatar').style.backgroundColor = user.avatar.color;
+    }
+
+    // Last login info
+    if (user.lastLogin) {
+      const lastLoginDate = new Date(user.lastLogin);
+      document.getElementById('lastLogin').textContent = 
+        `Dernière connexion: ${formatDate(user.lastLogin)}`;
+    } else {
+      document.getElementById('lastLogin').textContent = 'Première connexion';
+    }
+
+    // Fill in user information
+    document.getElementById('infoEmail').textContent = escapeHtml(user.email);
+    document.getElementById('infoName').textContent = escapeHtml(user.displayName);
+    document.getElementById('infoJoined').textContent = formatDate(user.createdAt);
+    document.getElementById('infoLastLogin').textContent = user.lastLogin ? formatDate(user.lastLogin) : 'N/A';
+
+    // Fill in interests
+    const interestsList = document.getElementById('interestsList');
+    if (user.interests && user.interests.length > 0) {
+      interestsList.innerHTML = user.interests.map(interest => `
+        <span class="interest-tag">
+          ${interest === 'innovation' ? '💡' : '🌱'} ${escapeHtml(interest)}
+        </span>
+      `).join('');
+    } else {
+      interestsList.innerHTML = '<p class="empty-state">Aucun intérêt renseigné</p>';
+    }
+
+    // Session info
+    document.getElementById('sessionToken').textContent = session.token.substring(0, 16) + '...';
+    document.getElementById('sessionTime').textContent = new Date(session.loginTime).toLocaleString('fr-FR');
+
+    // Update session expiry countdown
+    function updateSessionExpiry() {
+      const now = new Date().getTime();
+      const expiresAt = session.expiresAt;
+      const remaining = Math.max(0, expiresAt - now);
+      const minutes = Math.floor(remaining / 60000);
+      const seconds = Math.floor((remaining % 60000) / 1000);
+      
+      document.getElementById('sessionExpiry').textContent = 
+        remaining === 0 ? 'Expiré' : `${minutes}m ${seconds}s`;
+      
+      if (remaining > 0) {
+        setTimeout(updateSessionExpiry, 1000);
+      }
+    }
+    updateSessionExpiry();
+
+    // Activity list
+    const activityList = document.getElementById('activityList');
+    const activities = [
+      { icon: '✅', text: 'Inscription réussie', time: '2 minutes' },
+      { icon: '🔐', text: 'Session sécurisée avec token', time: 'maintenant' },
+    ];
+
+    if (activities.length > 0) {
+      activityList.innerHTML = activities.map(activity => `
+        <div class="activity-item">
+          <span class="activity-icon">${activity.icon}</span>
+          <div class="activity-text">
+            <p>${activity.text}</p>
+            <small>${activity.time}</small>
+          </div>
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>

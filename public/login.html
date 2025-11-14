@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connexion - Youth Green Tech</title>
+  <meta name="description" content="Connexion membre - Youth Green Tech" />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' fill='%2327ae60'>✓</text></svg>" />
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.min.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container">
+      <div class="header-inner">
+        <a href="index.html" class="brand">
+          <span class="logo-icon">✓</span> Youth Green Tech
+        </a>
+        <nav class="site-nav" id="site-nav">
+          <ul>
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="register.html" class="cta-link">S'inscrire</a></li>
+          </ul>
+        </nav>
+        <button class="nav-toggle" aria-expanded="false" aria-label="Menu de navigation">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="auth-page">
+    <section class="auth-container">
+      <div class="auth-box">
+        <h1>Connexion</h1>
+        <p class="auth-subtitle">Accédez à votre espace membre</p>
+
+        <!-- Error Message -->
+        <div id="errorMessage" class="auth-message error-message" role="alert" aria-live="assertive" style="display: none;">
+          <span class="message-icon">⚠️</span>
+          <span id="errorText"></span>
+        </div>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="auth-message success-message" role="alert" aria-live="polite" style="display: none;">
+          <span class="message-icon">✅</span>
+          <span id="successText"></span>
+        </div>
+
+        <!-- Warning Message (Session expired) -->
+        <div id="warningMessage" class="auth-message warning-message" role="alert" aria-live="polite" style="display: none;">
+          <span class="message-icon">ℹ️</span>
+          <span id="warningText"></span>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="auth-form" aria-label="Formulaire de connexion">
+          <div class="form-group">
+            <label for="email">Email <span class="required">*</span></label>
+            <input
+              id="email"
+              type="email"
+              required
+              aria-required="true"
+              placeholder="vous@exemple.com"
+              autocomplete="email"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Mot de passe <span class="required">*</span></label>
+            <input
+              id="password"
+              type="password"
+              required
+              aria-required="true"
+              placeholder="Votre mot de passe"
+              autocomplete="current-password"
+            />
+          </div>
+
+          <div class="form-group checkbox">
+            <input id="remember" type="checkbox" />
+            <label for="remember">
+              Se souvenir de moi (30 minutes)
+            </label>
+          </div>
+
+          <button type="submit" class="btn primary btn-submit" aria-label="Se connecter">
+            Se connecter
+          </button>
+
+          <p class="auth-footer">
+            Pas encore membre? <a href="register.html">S'inscrire</a>
+          </p>
+        </form>
+
+        <!-- Session Info -->
+        <div class="auth-info">
+          <p>
+            <strong>Données 100% sécurisées :</strong> Vos données sont chiffrées et stockées localement sur votre ordinateur uniquement.
+          </p>
+        </div>
+      </div>
+
+      <!-- Features Column -->
+      <div class="auth-benefits">
+        <h2>Espace Membre</h2>
+        <ul class="benefits-list">
+          <li>
+            <span class="benefit-icon">🔒</span>
+            <h3>100% Sécurisé</h3>
+            <p>Chiffrement bcrypt, pas de serveur externe</p>
+          </li>
+          <li>
+            <span class="benefit-icon">📱</span>
+            <h3>Responsive</h3>
+            <p>Accès depuis n'importe quel appareil</p>
+          </li>
+          <li>
+            <span class="benefit-icon">⚡</span>
+            <h3>Ultra-rapide</h3>
+            <p>Pas de délai - données en local</p>
+          </li>
+          <li>
+            <span class="benefit-icon">👤</span>
+            <h3>Profil Personnel</h3>
+            <p>Gérez votre profil et vos préférences</p>
+          </li>
+        </ul>
+
+        <!-- Demo Credentials -->
+        <div class="demo-box">
+          <h3>🧪 Compte de test</h3>
+          <p><strong>Email:</strong> demo@example.com</p>
+          <p><strong>Mot de passe:</strong> DemoPass123</p>
+          <small>Créé automatiquement à la première visite</small>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <p>&copy; <span id="year"></span> Youth Green Tech. Tous droits réservés.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <!-- bcrypt.js for password verification -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+  
+  <!-- Members manager -->
+  <script src="js/members.js"></script>
+
+  <!-- Page script -->
+  <script>
+    // Redirect if already logged in
+    if (auth.isLoggedIn()) {
+      window.location.href = 'dashboard.html';
+    }
+
+    // Check for session expiration redirect
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('expired') === 'true') {
+      document.getElementById('warningText').textContent = 'Votre session a expiré. Veuillez vous reconnecter.';
+      document.getElementById('warningMessage').style.display = 'block';
+    }
+
+    const form = document.getElementById('loginForm');
+    const errorMsg = document.getElementById('errorMessage');
+    const successMsg = document.getElementById('successMessage');
+    const errorText = document.getElementById('errorText');
+    const successText = document.getElementById('successText');
+
+    // Update year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Mobile nav
+    const navToggle = document.querySelector('.nav-toggle');
+    const siteNav = document.getElementById('site-nav');
+    navToggle.addEventListener('click', () => {
+      const expanded = navToggle.getAttribute('aria-expanded') === 'true';
+      navToggle.setAttribute('aria-expanded', String(!expanded));
+      siteNav.classList.toggle('open');
+    });
+
+    // Close mobile nav on link click
+    document.querySelectorAll('#site-nav a').forEach(link => {
+      link.addEventListener('click', () => {
+        navToggle.setAttribute('aria-expanded', 'false');
+        siteNav.classList.remove('open');
+      });
+    });
+
+    // Create demo account if it doesn't exist
+    function createDemoAccount() {
+      const users = auth.getAllUsers();
+      const demoExists = users.some(u => u.email === 'demo@example.com');
+      
+      if (!demoExists) {
+        bcrypt.hash('DemoPass123', 10).then(hashedPassword => {
+          const demoUser = {
+            id: auth.generateUserId(),
+            email: 'demo@example.com',
+            passwordHash: hashedPassword,
+            displayName: 'Utilisateur Test',
+            interests: ['innovation'],
+            createdAt: new Date().toISOString(),
+            lastLogin: null,
+            avatar: auth.generateAvatar('Utilisateur Test'),
+            bio: 'Compte de démonstration pour tester la plateforme',
+            phone: '',
+            verified: false,
+          };
+          
+          const allUsers = auth.getAllUsers();
+          allUsers.push(demoUser);
+          localStorage.setItem(auth.USERS_KEY, JSON.stringify(allUsers));
+          console.log('✅ Compte de test créé');
+        });
+      }
+    }
+
+    // Initialize demo account
+    createDemoAccount();
+
+    // Form submission
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      // Hide previous messages
+      errorMsg.style.display = 'none';
+      successMsg.style.display = 'none';
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const remember = document.getElementById('remember').checked;
+
+      if (!email || !password) {
+        showError('Email et mot de passe obligatoires');
+        return;
+      }
+
+      // Disable button
+      const submitBtn = form.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Connexion en cours...';
+
+      // Login user
+      const result = await auth.loginUser(email, password);
+
+      if (result.success) {
+        showSuccess(result.message);
+        
+        // Redirect to dashboard after 1.5 seconds
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 1500);
+      } else {
+        showError(result.message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Se connecter';
+      }
+    });
+
+    function showError(message) {
+      errorText.textContent = message;
+      errorMsg.style.display = 'block';
+      errorMsg.classList.add('shake');
+      setTimeout(() => errorMsg.classList.remove('shake'), 500);
+    }
+
+    function showSuccess(message) {
+      successText.textContent = message;
+      successMsg.style.display = 'block';
+      successMsg.classList.add('fade-in');
+      setTimeout(() => successMsg.classList.remove('fade-in'), 500);
+    }
+  </script>
+</body>
+</html>

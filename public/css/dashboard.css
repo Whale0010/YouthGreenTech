@@ -1,0 +1,137 @@
+/* ===== DASHBOARD SPECIFIC STYLES ===== */
+
+/* Override for dashboard-specific elements */
+.dashboard-page .container {
+  max-width: 1200px;
+}
+
+/* Dashboard hero gradient overlay */
+.dashboard-hero::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(52, 152, 219, 0.05) 100%);
+  pointer-events: none;
+}
+
+/* Ensure dashboard hero is positioned */
+.dashboard-hero {
+  position: relative;
+}
+
+/* Dashboard-specific card animations */
+.dashboard-card {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover effects for stat boxes */
+.stat-box {
+  cursor: pointer;
+}
+
+.stat-box:active {
+  transform: scale(0.98);
+}
+
+/* Profile section specific styles */
+.profile-section .container {
+  max-width: 1000px;
+}
+
+/* Loading state */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.spinner {
+  border: 3px solid rgba(39, 174, 96, 0.2);
+  border-top: 3px solid var(--primary);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Accessibility improvements */
+.btn-submit:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.tab-button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+  .auth-page,
+  .dashboard-page {
+    background: white;
+  }
+
+  .site-header,
+  .site-footer,
+  .btn-submit {
+    display: none;
+  }
+
+  .auth-box,
+  .dashboard-card,
+  .profile-card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+  .auth-box,
+  .dashboard-card,
+  .profile-card,
+  .profile-section {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border-color: #3a3a3a;
+  }
+
+  .form-group input::placeholder {
+    color: #888;
+  }
+
+  .profile-tabs {
+    border-bottom-color: #3a3a3a;
+  }
+
+  .security-section {
+    border-bottom-color: #3a3a3a;
+  }
+}
