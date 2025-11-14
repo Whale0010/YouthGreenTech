@@ -1,0 +1,141 @@
+================================================================================
+                      GUIDE SSH COPIER-COLLER RAPIDE
+================================================================================
+
+Remplacez USERNAME par votre nom d'utilisateur GitHub dans tous les exemples.
+
+================================================================================
+ÉTAPE 1 : Générer une clé SSH (première fois uniquement)
+================================================================================
+
+Copier-coller dans PowerShell :
+ssh-keygen -t ed25519 -C "your-email@example.com"
+
+Appuyez sur Entrée pour le chemin par défaut.
+Optionnel : entrez une passphrase ou laissez vide.
+
+================================================================================
+ÉTAPE 2 : Afficher et copier la clé publique dans GitHub
+================================================================================
+
+Copier la clé dans le presse-papiers :
+type $env:USERPROFILE\.ssh\id_ed25519.pub | clip
+
+Actions manuelles :
+1. Ouvrez https://github.com/settings/ssh
+2. Cliquez "New SSH key"
+3. Collez la clé (elle est dans le presse-papiers)
+4. Cliquez "Add SSH key"
+
+================================================================================
+ÉTAPE 3 : Tester la connexion SSH
+================================================================================
+
+Copier-coller dans PowerShell :
+ssh -T git@github.com
+
+Résultat attendu :
+Hi USERNAME! You've successfully authenticated, but GitHub does not provide shell access.
+
+================================================================================
+ÉTAPE 4 : Configurer Git avec le remote SSH
+================================================================================
+
+Copier-coller dans PowerShell (remplacez USERNAME) :
+git remote add origin git@github.com:USERNAME/mon-association.git
+
+OU si le remote existe déjà :
+git remote set-url origin git@github.com:USERNAME/mon-association.git
+
+Vérifier :
+git remote -v
+
+================================================================================
+ÉTAPE 5 : Vérifier la configuration Git
+================================================================================
+
+Copier-coller dans PowerShell :
+git config user.name
+git config user.email
+git branch -M main
+git status --short
+
+================================================================================
+ÉTAPE 6 : Ajouter, committer, pousser
+================================================================================
+
+Copier-coller dans PowerShell (ligne par ligne) :
+
+# Ajouter tous les fichiers
+git add . --all
+
+# Committer
+git commit -m "Youth Green Tech - Déploiement automatique"
+
+# Pousser
+git push -u origin main --force
+
+================================================================================
+ÉTAPE 7 : Vérifier que le push a réussi
+================================================================================
+
+Copier-coller dans PowerShell :
+git log -1 --oneline
+git ls-remote origin main
+
+Puis vérifier manuellement : https://github.com/USERNAME/mon-association
+
+================================================================================
+ÉTAPE 8 : Configurer GitHub Pages (manuel via web)
+================================================================================
+
+Actions manuelles :
+1. Ouvrez https://github.com/USERNAME/mon-association
+2. Settings → Pages
+3. Source : sélectionnez branch 'main' et folder '/' (root)
+4. Cliquez Save/Enable
+5. Attendez 2~10 minutes
+
+================================================================================
+ÉTAPE 9 : Tester l'URL GitHub Pages
+================================================================================
+
+Copier-coller dans PowerShell (attendre 2 minutes d'abord) :
+Start-Sleep -Seconds 120
+Invoke-WebRequest -UseBasicParsing -Uri 'https://USERNAME.github.io/mon-association' -TimeoutSec 30
+
+Résultat attendu : StatusCode 200
+
+================================================================================
+RÉSOLUTION DES PROBLÈMES
+================================================================================
+
+Erreur "Permission denied (publickey)" :
+→ Vérifiez que la clé publique est bien dans GitHub Settings → SSH Keys
+→ Testez : ssh -T git@github.com
+
+Erreur "src refspec main does not match any" :
+→ Assurez-vous qu'il y a au moins un commit : git log -1 --oneline
+→ Assurez-vous d'être sur la branche main : git branch -M main
+
+Erreur "404 Not Found" sur l'URL GitHub Pages :
+→ Attendez 5~10 minutes supplémentaires (le déploiement peut être lent)
+→ Vérifiez que GitHub Pages est bien activé dans Settings
+
+Erreur "fatal: 'origin' does not appear to be a 'git' repository" :
+→ Le dossier n'est pas un repo Git valide
+→ Retournez au dossier du projet et vérifiez que .git existe
+→ Si pas de .git, réinitialisez : git init
+
+================================================================================
+NOTES IMPORTANTES
+================================================================================
+
+✓ Aucune exécution automatique — copier-coller chaque commande manuellement
+✓ SSH est plus sûr qu'HTTPS + token (pas de token exposé)
+✓ SSH demande une authentification unique au premier push
+✓ Si passphrase SSH, vous serez invité une fois
+✓ Remplacez USERNAME par votre nom GitHub réel
+✓ Le dossier de travail doit être C:\Users\pc\mon-association
+
+================================================================================
