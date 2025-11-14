@@ -1,0 +1,330 @@
+================================================================================
+                          BACKEND — RÉSUMÉ EXÉCUTION
+                              Quick Start
+================================================================================
+
+OBJECTIF : Créer backend complet en 5 étapes
+
+================================================================================
+ÉTAPE 1 : Créer .env.local (à la racine du projet)
+================================================================================
+
+Fichier : C:\Users\pc\mon-association\.env.local
+
+Copier-coller :
+
+MONGODB_URI=mongodb+srv://youthtech_user:YOUR_PASSWORD@cluster0.xxxxx.mongodb.net/youthgreentech?retryWrites=true&w=majority
+NEXTAUTH_URL=http://localhost:3001
+NEXTAUTH_SECRET=your-random-secret-here
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASSWORD=your-app-password
+API_BASE_URL=http://localhost:3001/api
+
+Remarque : Générer NEXTAUTH_SECRET avec :
+openssl rand -hex 32
+
+================================================================================
+ÉTAPE 2 : Créer les fichiers d'une seule commande (PowerShell)
+================================================================================
+
+IMPORTANT : À exécuter dans PowerShell depuis C:\Users\pc\mon-association
+
+# Créer les dossiers
+mkdir -p app\lib\models, app\api\auth\register, app\api\contact, app\api\users, app\api\health
+
+================================================================================
+ÉTAPE 3 : Créer app/lib/db.js
+================================================================================
+
+Créer le fichier C:\Users\pc\mon-association\app\lib\db.js
+
+Contenu :
+
+import { MongoClient } from "mongodb";
+
+const mongoUri = process.env.MONGODB_URI;
+
+if (!mongoUri) {
+  throw new Error("MONGODB_URI est manquant dans .env.local");
+}
+
+let cachedClient = null;
+let cachedDb = null;
+
+export async function connectToDatabase() {
+  if (cachedClient && cachedDb) {
+    return { client: cachedClient, db: cachedDb };
+  }
+
+  const client = new MongoClient(mongoUri);
+  
+  try {
+    await client.connect();
+    const db = client.db("youthgreentech");
+    await db.admin().ping();
+    console.log("✓ Connecté à MongoDB");
+
+    cachedClient = client;
+    cachedDb = db;
+
+    return { client, db };
+  } catch (error) {
+    console.error("✗ Erreur connexion MongoDB:", error.message);
+    throw error;
+  }
+}
+
+================================================================================
+ÉTAPE 4 : Créer app/lib/models/User.js
+================================================================================
+
+Fichier : C:\Users\pc\mon-association\app\lib\models\User.js
+
+import { ObjectId } from "mongodb";
+import bcryptjs from "bcryptjs";
+import { connectToDatabase } from "../db";
+
+export const User = {
+  async create(userData) {
+    const { db } = await connectToDatabase();
+    const hashedPassword = await bcryptjs.hash(userData.password, 10);
+    
+    const user = {
+      email: userData.email,
+      displayName: userData.displayName || "Utilisateur",
+      passwordHash: hashedPassword,
+      interests: userData.interests || [],
+      avatar: userData.avatar || null,
+      role: userData.role || "member",
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    const result = await db.collection("users").insertOne(user);
+    return { _id: result.insertedId, ...user };
+  },
+
+  async findByEmail(email) {
+    const { db } = await connectToDatabase();
+    return await db.collection("users").findOne({ email });
+  },
+
+  async findById(id) {
+    const { db } = await connectToDatabase();
+    return await db.collection("users").findOne({ _id: new ObjectId(id) });
+  },
+
+  async updateProfile(id, updateData) {
+    const { db } = await connectToDatabase();
+    const result = await db.collection("users").findOneAndUpdate(
+      { _id: new ObjectId(id) },
+      { $set: { ...updateData, updatedAt: new Date() } },
+      { returnDocument: "after" }
+    );
+    return result.value;
+  },
+
+  async verifyPassword(email, password) {
+    const user = await this.findByEmail(email);
+    if (!user) return null;
+    
+    const isValid = await bcryptjs.compare(password, user.passwordHash);
+    return isValid ? user : null;
+  }
+};
+
+================================================================================
+ÉTAPE 5 : Créer app/api/health/route.js (test rapide)
+================================================================================
+
+Fichier : C:\Users\pc\mon-association\app\api\health\route.js
+
+import { connectToDatabase } from "@/app/lib/db";
+
+export async function GET(request) {
+  try {
+    const { db } = await connectToDatabase();
+    await db.admin().ping();
+
+    return Response.json({
+      status: "healthy",
+      timestamp: new Date().toISOString(),
+      database: "connected"
+    });
+  } catch (error) {
+    return Response.json(
+      {
+        status: "unhealthy",
+        error: error.message,
+        timestamp: new Date().toISOString()
+      },
+      { status: 503 }
+    );
+  }
+}
+
+================================================================================
+TESTER LOCALEMENT (PowerShell)
+================================================================================
+
+1) Lancer le serveur :
+npm run dev
+
+Attendre le message : "▲ Next.js ... - Local: http://localhost:3001"
+
+2) Dans un nouveau terminal, tester health check :
+$response = Invoke-WebRequest -Uri "http://localhost:3001/api/health" -UseBasicParsing
+$response.Content | ConvertFrom-Json | Format-List
+
+Résultat attendu : status = "healthy" + database = "connected"
+
+3) Si erreur MongoDB :
+- Vérifier que MONGODB_URI est correct dans .env.local
+- Vérifier que MongoDB Atlas cluster est créé et accessible
+- Vérifier que votre IP est whitelistée dans MongoDB Atlas
+
+================================================================================
+CRÉER LES AUTRES API ROUTES (copier-coller dans leurs fichiers respectifs)
+================================================================================
+
+Fichier : app/api/auth/register/route.js
+
+import { User } from "@/app/lib/models/User";
+import { z } from "zod";
+
+const registerSchema = z.object({
+  email: z.string().email("Email invalide"),
+  password: z.string().min(6, "Min 6 caractères"),
+  displayName: z.string().min(2, "Min 2 caractères")
+});
+
+export async function POST(request) {
+  try {
+    const body = await request.json();
+    const validated = registerSchema.parse(body);
+
+    const existingUser = await User.findByEmail(validated.email);
+    if (existingUser) {
+      return Response.json(
+        { error: "Email déjà utilisé" },
+        { status: 400 }
+      );
+    }
+
+    const newUser = await User.create({
+      email: validated.email,
+      password: validated.password,
+      displayName: validated.displayName
+    });
+
+    const { passwordHash, ...userWithoutPassword } = newUser;
+    return Response.json(userWithoutPassword, { status: 201 });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return Response.json(
+        { error: error.errors[0].message },
+        { status: 400 }
+      );
+    }
+
+    return Response.json(
+      { error: "Erreur serveur" },
+      { status: 500 }
+    );
+  }
+}
+
+---
+
+Fichier : app/api/contact/route.js
+
+import { connectToDatabase } from "@/app/lib/db";
+import { z } from "zod";
+
+const contactSchema = z.object({
+  name: z.string().min(2, "Nom requis"),
+  email: z.string().email("Email invalide"),
+  subject: z.string().min(5, "Sujet requis"),
+  message: z.string().min(10, "Message trop court")
+});
+
+export async function POST(request) {
+  try {
+    const body = await request.json();
+    const validated = contactSchema.parse(body);
+
+    const { db } = await connectToDatabase();
+
+    const contact = {
+      ...validated,
+      status: "unread",
+      createdAt: new Date()
+    };
+
+    const result = await db.collection("contacts").insertOne(contact);
+    return Response.json({ _id: result.insertedId, ...contact }, { status: 201 });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return Response.json(
+        { error: error.errors[0].message },
+        { status: 400 }
+      );
+    }
+
+    return Response.json(
+      { error: "Erreur serveur" },
+      { status: 500 }
+    );
+  }
+}
+
+================================================================================
+POUSSER LE BACKEND VERS GITHUB
+================================================================================
+
+Dans PowerShell depuis C:\Users\pc\mon-association :
+
+git add app/api app/lib .env.local
+git commit -m "Ajouter backend complet — MongoDB + API routes + NextAuth"
+git push origin main
+
+================================================================================
+DÉPLOYER VERS VERCEL (Production)
+================================================================================
+
+1) Installer Vercel CLI :
+npm install -g vercel
+
+2) Se connecter et déployer :
+vercel login
+vercel --prod
+
+3) Dans le dashboard Vercel, ajouter les env vars :
+- MONGODB_URI
+- NEXTAUTH_SECRET
+- NEXTAUTH_URL=https://your-app.vercel.app
+
+4) Redéployer :
+vercel --prod
+
+5) Tester en production :
+curl https://your-app.vercel.app/api/health
+
+================================================================================
+VÉRIFICATION FINALE
+================================================================================
+
+☐ .env.local créé
+☐ app/lib/db.js créé
+☐ app/lib/models/User.js créé
+☐ app/api/health/route.js créé et testé
+☐ app/api/auth/register/route.js créé
+☐ app/api/contact/route.js créé
+☐ npm run dev fonctionne
+☐ GET /api/health retourne "healthy"
+☐ Code poussé vers GitHub
+☐ Vercel déployé et testé
+
+================================================================================

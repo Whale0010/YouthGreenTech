@@ -1,0 +1,215 @@
+================================================================================
+                    RÉSOUDRE CONFLIT DE MERGE — README.md
+                         Git Merge Conflict Resolution
+================================================================================
+
+STATUT ACTUEL :
+- Branche : main
+- Conflit détecté : README.md (both added)
+- Commits en attente de merge : 6500ac1af70f3a2826650fd22a6a523c43cc5cb2
+
+================================================================================
+OPTION 1 : ANNULER LE MERGE (si vous ne voulez pas le fusionner)
+================================================================================
+
+Copier-coller dans PowerShell :
+git merge --abort
+
+Cela annulera le merge et restaurera l'état du branch avant le merge.
+
+================================================================================
+OPTION 2 : RÉSOUDRE LE CONFLIT MANUELLEMENT (recommandé)
+================================================================================
+
+ÉTAPE 1 : Voir le contenu du fichier en conflit
+─────────────────────────────────────────────────
+Copier-coller dans PowerShell :
+type README.md | more
+
+Les marqueurs de conflit :
+- <<<<<<< HEAD          = votre version (branche actuelle)
+- =======              = séparateur
+- >>>>>>> [commit]     = version entrante (branche/commit fusionné)
+
+EXEMPLE DE STRUCTURE :
+┌──────────────────────────────────────────────────────────┐
+│ <<<<<<< HEAD                                             │
+│ (votre contenu — version locale)                         │
+│ =======                                                  │
+│ (contenu de la branche à fusionner)                      │
+│ >>>>>>> commit_hash                                      │
+└──────────────────────────────────────────────────────────┘
+
+ÉTAPE 2 : Éditer le fichier
+──────────────────────────────
+Choisissez une des solutions :
+
+A) Garder votre version (HEAD) uniquement :
+   - Supprimez les lignes entre ======= et >>>>>>> commit_hash
+   - Supprimez les marqueurs <<<<<<< et =======
+
+B) Garder la version entrante uniquement :
+   - Supprimez les lignes entre <<<<<<< et =======
+   - Supprimez les marqueurs ======= et >>>>>>> commit_hash
+
+C) Fusionner les deux versions (combiner le contenu utile)
+   - Supprimez les marqueurs
+   - Gardez le meilleur des deux versions
+
+D) Utiliser un éditeur Git (si VS Code est ouvert) :
+   - Cliquez sur "Accept Current Change" ou "Accept Incoming Change"
+   - Ou "Accept Both Changes"
+
+ÉTAPE 3 : Vérifier le fichier est valide
+──────────────────────────────────────────
+Copier-coller dans PowerShell :
+type README.md | Select-String -Pattern "<<<<<<< |======= |>>>>>>>" 
+
+Résultat attendu : aucune ligne affichée (les marqueurs sont supprimés)
+
+================================================================================
+OPTION 3 : RÉSOUDRE AVEC GIT (commandes automatiques)
+================================================================================
+
+A) Garder votre version locale (HEAD) uniquement :
+───────────────────────────────────────────────────
+git checkout --ours README.md
+git add README.md
+git commit -m "Résoudre conflit : garder version locale"
+git push origin main
+
+B) Garder la version entrante uniquement :
+───────────────────────────────────────────
+git checkout --theirs README.md
+git add README.md
+git commit -m "Résoudre conflit : garder version entrante"
+git push origin main
+
+C) Utiliser un outil de merge (Meld, Beyond Compare, ou VS Code) :
+──────────────────────────────────────────────────────────────────
+git config --global merge.tool vscode
+git mergetool README.md
+
+(Cela ouvre VS Code avec l'interface de merge interactive)
+
+================================================================================
+RÉSOLUTION COMPLÈTE (commandes à copier-coller dans l'ordre)
+================================================================================
+
+ÉTAPE 1 : Voir le conflit
+────────────────────────
+git diff README.md
+
+ÉTAPE 2 : Résoudre (choisissez une option) :
+
+Option A — Garder votre version :
+git checkout --ours README.md
+
+Option B — Garder la version entrante :
+git checkout --theirs README.md
+
+Option C — Résoudre manuellement (VS Code / éditeur) :
+code README.md
+(éditez le fichier, supprimez les marqueurs <<<, ===, >>>)
+
+ÉTAPE 3 : Ajouter le fichier résolu
+──────────────────────────────────
+git add README.md
+
+ÉTAPE 4 : Vérifier l'état du merge
+───────────────────────────────────
+git status
+
+Résultat attendu :
+On branch main
+All conflicts fixed but you are still merging.
+
+ÉTAPE 5 : Committer la résolution
+──────────────────────────────────
+git commit -m "Résoudre conflit de merge sur README.md"
+
+ÉTAPE 6 : Vérifier les logs
+───────────────────────────
+git log --oneline -3
+
+ÉTAPE 7 : Pousser vers GitHub (SSH)
+───────────────────────────────────
+git push origin main
+
+================================================================================
+DIAGNOSTIC RAPIDE (si problème)
+================================================================================
+
+Voir tous les fichiers en conflit :
+git diff --name-only --diff-filter=U
+
+Voir le conflit dans un fichier spécifique :
+git diff README.md
+
+Voir la version HEAD (votre version) :
+git show :1:README.md > README-base.txt
+
+Voir la version fusionnée (entrante) :
+git show :3:README.md > README-theirs.txt
+
+Voir la version courante (mixte) :
+git show :2:README.md > README-ours.txt
+
+================================================================================
+ERREURS FRÉQUENTES ET SOLUTIONS
+================================================================================
+
+Erreur : "fatal: You have not concluded your merge (MERGE_HEAD exists)"
+Solution : 
+  a) Terminez le merge : git merge --continue ou git commit
+  b) OU annulez-le : git merge --abort
+
+Erreur : "merge conflict in README.md"
+Solution : 
+  Résolvez le conflit avec l'une des méthodes ci-dessus
+  Puis : git add README.md && git commit
+
+Erreur : "Push rejected — non-fast-forward"
+Solution : 
+  Cela signifie que l'historique distant a changé
+  Tentez : git pull --rebase origin main
+  Puis : git push origin main
+
+Erreur : "Permission denied (publickey)"
+Solution : 
+  Vérifiez SSH : ssh -T git@github.com
+  OU utilisez HTTPS avec credential helper : git config --global credential.helper manager-core
+
+================================================================================
+RÉSUMÉ SIMPLIFIÉ (60 secondes)
+================================================================================
+
+# 1) Voir le conflit
+git diff README.md
+
+# 2) Résoudre (choisir UNE ligne) :
+git checkout --ours README.md      # Garder votre version
+git checkout --theirs README.md    # Garder la version entrante
+
+# 3) Ajouter et committer
+git add README.md
+git commit -m "Résoudre conflit README.md"
+
+# 4) Pousser
+git push origin main
+
+================================================================================
+NOTES IMPORTANTES
+================================================================================
+
+✓ Pas de token ni authentification supplémentaire requise si SSH est configuré
+✓ SSH utilise la clé privée (aucun token exposé)
+✓ Après résolution, le push se fera automatiquement si SSH fonctionne
+✓ Si erreur lors du push, vérifiez : ssh -T git@github.com
+
+PROCHAINES ÉTAPES (après push) :
+1. Vérifier sur GitHub : https://github.com/Whale0010/YouthGreenTech
+2. Configurer GitHub Pages (si pas encore fait)
+3. Attendre 2~10 minutes pour le déploiement
+
+================================================================================
